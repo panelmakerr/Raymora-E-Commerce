@@ -1,66 +1,91 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Truck, Shield, Leaf, RotateCcw } from "lucide-react";
+import { ArrowRight, Truck, Shield, RotateCcw, Zap } from "lucide-react";
 import ProductCard from "@/components/product/ProductCard";
-import { products, categories } from "@/data/products";
+import Text3D from "@/components/ui/Text3D";
+import ParallaxLayer from "@/components/ui/ParallaxLayer";
+import { products } from "@/data/products";
 
 export default function HomePage() {
-  const featured = products.slice(0, 4);
-
   return (
     <>
       {/* Hero */}
-      <section className="relative min-h-[85vh] flex items-center texture-overlay overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-parchment-50 via-parchment-100 to-parchment-200" />
-        <div className="absolute inset-0 bg-grain opacity-30" />
+      <section className="relative min-h-[90vh] flex items-center overflow-hidden grid-pattern scanline">
+        {/* Background layers */}
+        <div className="absolute inset-0 bg-hero-gradient" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-dark-950" />
+
+        {/* Floating orbs */}
+        <div className="absolute top-20 left-10 w-72 h-72 bg-forest-500/10 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-lime-500/5 rounded-full blur-3xl animate-float-delayed" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-forest-600/5 rounded-full blur-[100px]" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="max-w-2xl">
-            <p className="text-sm font-medium text-gold-600 tracking-boutique uppercase mb-4 animate-fade-in">
-              Crafted with intention
-            </p>
-            <h1 className="font-serif text-5xl sm:text-6xl lg:text-7xl font-semibold text-espresso-800 leading-[1.1] heading-imperfect animate-fade-in">
-              Objects that
-              <br />
-              <span className="italic text-gold-600">carry stories</span>
-            </h1>
-            <p className="mt-6 text-lg text-espresso-500 max-w-lg leading-relaxed animate-fade-in animation-delay-200">
-              Every piece in our collection is made by hand, shaped by tradition,
-              and designed to age beautifully alongside you.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-4 animate-fade-in animation-delay-300">
-              <Link
-                href="/products"
-                className="inline-flex items-center gap-2 bg-espresso-800 text-parchment-100 px-8 py-3.5 text-sm font-medium tracking-boutique uppercase hover:bg-espresso-700 transition-colors"
-              >
-                Shop Collection
-                <ArrowRight size={16} />
-              </Link>
-              <Link
-                href="#"
-                className="inline-flex items-center gap-2 border border-espresso-300 text-espresso-700 px-8 py-3.5 text-sm font-medium tracking-boutique uppercase hover:bg-parchment-100 transition-colors"
-              >
-                Our Story
-              </Link>
-            </div>
+          <div className="max-w-3xl">
+            <ParallaxLayer speed={0.3}>
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-forest-500/10 border border-forest-500/20 rounded-full mb-6">
+                <Zap size={14} className="text-lime-400" />
+                <span className="text-xs font-semibold text-forest-300 tracking-widest uppercase">
+                  Limited Drop — 2025
+                </span>
+              </div>
+            </ParallaxLayer>
+
+            <ParallaxLayer speed={0.2}>
+              <h1 className="font-display text-5xl sm:text-7xl lg:text-8xl font-bold text-white leading-[0.95] mb-6">
+                <Text3D text="Wear" className="text-5xl sm:text-7xl lg:text-8xl" depth={4} color="#22C55E" />
+                <br />
+                <span className="text-3d-emboss">
+                  <span className="text-3d-lime">Her</span>
+                  <span className="text-white">itage</span>
+                </span>
+              </h1>
+            </ParallaxLayer>
+
+            <ParallaxLayer speed={0.15}>
+              <p className="text-lg sm:text-xl text-dark-300 max-w-lg leading-relaxed mb-8">
+                Two exclusive tees. Dutch windmill heritage meets distribution culture.
+                Premium cotton, limited runs, designed to stand out.
+              </p>
+            </ParallaxLayer>
+
+            <ParallaxLayer speed={0.1}>
+              <div className="flex flex-wrap gap-4">
+                <Link
+                  href="/products"
+                  className="group inline-flex items-center gap-2 bg-gradient-to-r from-forest-600 to-lime-600 text-white px-8 py-4 text-sm font-bold tracking-widest uppercase rounded-xl hover:from-forest-500 hover:to-lime-500 transition-all duration-300 shadow-lg hover:shadow-glow-green"
+                >
+                  Shop Now
+                  <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                </Link>
+                <Link
+                  href="/products"
+                  className="inline-flex items-center gap-2 border border-dark-600 text-dark-200 px-8 py-4 text-sm font-bold tracking-widest uppercase rounded-xl hover:border-forest-600 hover:text-forest-400 transition-all duration-300"
+                >
+                  View Collections
+                </Link>
+              </div>
+            </ParallaxLayer>
           </div>
         </div>
       </section>
 
       {/* Trust Bar */}
-      <section className="bg-parchment-100 border-y border-parchment-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <section className="border-y border-dark-800 bg-dark-950">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
               { icon: Truck, text: "Free shipping over $150" },
-              { icon: Shield, text: "2-year warranty" },
-              { icon: Leaf, text: "Sustainably sourced" },
-              { icon: RotateCcw, text: "30-day returns" },
+              { icon: Shield, text: "Premium quality guaranteed" },
+              { icon: RotateCcw, text: "30-day easy returns" },
+              { icon: Zap, text: "Limited edition drops" },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-3">
-                <item.icon size={18} className="text-gold-600 flex-shrink-0" />
-                <span className="text-xs text-espresso-600 tracking-editorial">
+                <div className="p-2 bg-forest-500/10 rounded-lg">
+                  <item.icon size={16} className="text-forest-400" />
+                </div>
+                <span className="text-xs text-dark-400 font-medium tracking-wide">
                   {item.text}
                 </span>
               </div>
@@ -69,139 +94,103 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Categories */}
+      {/* Featured Products */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="text-center mb-12">
-          <h2 className="font-serif text-3xl lg:text-4xl font-semibold text-espresso-800 heading-imperfect">
-            Explore by Craft
-          </h2>
-          <p className="mt-3 text-sm text-espresso-400 tracking-editorial">
-            Four traditions, infinite possibilities
-          </p>
+        <div className="text-center mb-14">
+          <ParallaxLayer speed={0.2}>
+            <h2 className="font-display text-3xl lg:text-5xl font-bold text-white mb-3">
+              The{" "}
+              <span className="text-3d-green">Collection</span>
+            </h2>
+            <p className="text-sm text-dark-400 tracking-widest uppercase">
+              Two tees. Zero compromise.
+            </p>
+          </ParallaxLayer>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {categories.map((cat) => (
-            <Link
-              key={cat.id}
-              href={`/products?category=${cat.slug}`}
-              className="card-organic group relative aspect-[3/4] bg-parchment-100 rounded-sm overflow-hidden"
-            >
-              <div className="absolute inset-0 bg-gradient-to-t from-espresso-800/60 via-espresso-800/20 to-transparent z-10" />
-              <div className="absolute inset-0 bg-gradient-to-br from-parchment-200 to-parchment-300" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="font-serif text-parchment-300 text-6xl font-semibold opacity-30">
-                  {cat.name.charAt(0)}
-                </span>
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 p-5 z-20">
-                <h3 className="font-serif text-xl font-medium text-parchment-100 heading-imperfect">
-                  {cat.name}
-                </h3>
-                <p className="mt-1 text-xs text-parchment-300 tracking-editorial">
-                  {cat.productCount} pieces
-                </p>
-              </div>
-            </Link>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-3xl mx-auto">
+          {products.map((product, i) => (
+            <ParallaxLayer key={product.id} speed={0.1 * (i + 1)}>
+              <ProductCard product={product} />
+            </ParallaxLayer>
           ))}
         </div>
       </section>
 
-      {/* Featured Products */}
-      <section className="bg-parchment-100/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="flex items-end justify-between mb-10">
-            <div>
-              <h2 className="font-serif text-3xl lg:text-4xl font-semibold text-espresso-800 heading-imperfect">
-                Recently Curated
-              </h2>
-              <p className="mt-3 text-sm text-espresso-400 tracking-editorial">
-                New arrivals from our artisan network
-              </p>
+      {/* 3D Typography Section */}
+      <section className="relative py-24 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-dark-950 via-forest-950/20 to-dark-950" />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <ParallaxLayer speed={0.3}>
+            <div className="mb-6">
+              <span className="font-display text-6xl sm:text-8xl lg:text-[10rem] font-bold text-dark-900/50 leading-none select-none">
+                RM
+              </span>
             </div>
-            <Link
-              href="/products"
-              className="hidden sm:flex items-center gap-1 text-sm font-medium text-gold-600 hover:text-gold-700 tracking-editorial transition-colors"
-            >
-              View all
-              <ArrowRight size={14} />
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {featured.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-          <div className="mt-8 text-center sm:hidden">
-            <Link
-              href="/products"
-              className="inline-flex items-center gap-1 text-sm font-medium text-gold-600 tracking-editorial"
-            >
-              View all products
-              <ArrowRight size={14} />
-            </Link>
-          </div>
+            <h2 className="font-display text-3xl lg:text-5xl font-bold text-white -mt-8 sm:-mt-12 lg:-mt-16 relative z-10">
+              Heritage in Every{" "}
+              <span className="text-3d-lime">Thread</span>
+            </h2>
+          </ParallaxLayer>
+          <ParallaxLayer speed={0.15}>
+            <p className="mt-6 text-dark-400 max-w-xl mx-auto leading-relaxed">
+              From Dutch windmills to distribution culture, each design tells a
+              story rooted in community and craft.
+            </p>
+          </ParallaxLayer>
         </div>
       </section>
 
-      {/* Brand Story */}
+      {/* Features Grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="aspect-[4/3] bg-parchment-100 rounded-sm card-organic overflow-hidden">
-            <div className="w-full h-full bg-gradient-to-br from-parchment-200 via-parchment-100 to-clay-100 flex items-center justify-center">
-              <div className="text-center">
-                <span className="font-serif text-5xl text-parchment-300 opacity-40">
-                  R
-                </span>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[
+            {
+              title: "Premium Cotton",
+              desc: "260 GSM heavyweight combed cotton for the black tee, 220 GSM for white. Built to last.",
+              icon: "🧵",
+            },
+            {
+              title: "Heritage Designs",
+              desc: "Dutch windmill art and tropical distribution graphics screen-printed with precision.",
+              icon: "🎨",
+            },
+            {
+              title: "Limited Runs",
+              desc: "Small batch production. When they're gone, they're gone.",
+              icon: "⚡",
+            },
+          ].map((feature, i) => (
+            <ParallaxLayer key={i} speed={0.1 * (i + 1)}>
+              <div className="card-3d p-6 bg-dark-900/50 border border-dark-800 rounded-xl group">
+                <span className="text-3xl mb-4 block">{feature.icon}</span>
+                <h3 className="font-display text-lg font-bold text-white mb-2 group-hover:text-forest-400 transition-colors">
+                  {feature.title}
+                </h3>
+                <p className="text-sm text-dark-400 leading-relaxed">
+                  {feature.desc}
+                </p>
               </div>
-            </div>
-          </div>
-          <div>
-            <p className="text-sm font-medium text-gold-600 tracking-boutique uppercase mb-3">
-              Our Philosophy
-            </p>
-            <h2 className="font-serif text-3xl lg:text-4xl font-semibold text-espresso-800 heading-imperfect leading-tight">
-              Slow craft in a
-              <br />
-              fast-moving world
-            </h2>
-            <p className="mt-6 text-espresso-500 leading-relaxed">
-              We partner with 40+ independent artisans across 12 countries,
-              honoring techniques passed down through generations. Every purchase
-              supports a maker, their family, and their craft.
-            </p>
-            <p className="mt-4 text-espresso-500 leading-relaxed">
-              We believe in fewer, better things. Objects made with integrity,
-              designed to be lived with, and crafted to develop character over
-              time.
-            </p>
-            <Link
-              href="#"
-              className="inline-flex items-center gap-2 mt-8 text-sm font-medium text-gold-600 hover:text-gold-700 tracking-boutique uppercase transition-colors"
-            >
-              Meet our artisans
-              <ArrowRight size={14} />
-            </Link>
-          </div>
+            </ParallaxLayer>
+          ))}
         </div>
       </section>
 
       {/* Newsletter */}
-      <section className="bg-espresso-800 texture-overlay">
+      <section className="border-t border-dark-800 bg-dark-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-          <h2 className="font-serif text-2xl lg:text-3xl font-semibold text-parchment-100 heading-imperfect">
-            Join the slow living movement
+          <h2 className="font-display text-2xl lg:text-3xl font-bold text-white mb-3">
+            Join the <span className="text-forest-400">Drop List</span>
           </h2>
-          <p className="mt-3 text-sm text-parchment-400 tracking-editorial max-w-md mx-auto">
-            First access to new collections, artisan stories, and a 10% welcome
-            gift.
+          <p className="text-sm text-dark-400 tracking-wide max-w-md mx-auto mb-8">
+            Be first to know about new releases, exclusive colors, and early access.
           </p>
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto">
             <input
               type="email"
               placeholder="your@email.com"
-              className="w-full sm:flex-1 px-5 py-3 bg-espresso-700 border border-espresso-600 text-parchment-200 text-sm placeholder:text-parchment-500 focus:border-gold-500 transition-colors"
+              className="w-full sm:flex-1 px-5 py-3 bg-dark-900 border border-dark-700 text-white text-sm placeholder:text-dark-500 rounded-xl focus:border-forest-500 transition-colors"
             />
-            <button className="w-full sm:w-auto px-8 py-3 bg-gold-500 text-white text-sm font-medium tracking-boutique uppercase hover:bg-gold-600 transition-colors">
+            <button className="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-forest-600 to-lime-600 text-white text-sm font-bold tracking-widest uppercase rounded-xl hover:from-forest-500 hover:to-lime-500 transition-all">
               Subscribe
             </button>
           </div>

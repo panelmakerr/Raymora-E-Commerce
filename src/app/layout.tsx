@@ -4,9 +4,9 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
-  title: "Raymora — Curated Goods from Independent Artisans",
+  title: "Raymora — Premium Heritage Streetwear",
   description:
-    "Premium handcrafted leather, ceramics, textiles, and botanicals from master artisans around the world.",
+    "Limited edition tees with heritage designs. Windmill Heritage and Sale & Distribution collections.",
 };
 
 export default function RootLayout({
@@ -16,7 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="min-h-screen flex flex-col">
+      <body className="min-h-screen flex flex-col bg-dark-950">
         <Header />
         <main className="flex-1 pt-16 lg:pt-20">{children}</main>
         <Footer />

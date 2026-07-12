@@ -2,9 +2,12 @@
 
 import { use } from "react";
 import Link from "next/link";
-import { ChevronRight, Truck, Shield, RotateCcw } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { products } from "@/data/products";
+import TShirtViewer from "@/components/product/TShirtViewer";
 import AddToCart from "@/components/product/AddToCart";
+import Text3D from "@/components/ui/Text3D";
+import ParallaxLayer from "@/components/ui/ParallaxLayer";
 
 export default function ProductDetailPage({
   params,
@@ -17,13 +20,8 @@ export default function ProductDetailPage({
   if (!product) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-        <h1 className="font-serif text-3xl text-espresso-800">
-          Product not found
-        </h1>
-        <Link
-          href="/products"
-          className="mt-4 inline-block text-sm text-gold-600 tracking-editorial"
-        >
+        <h1 className="font-display text-3xl text-white">Product not found</h1>
+        <Link href="/products" className="mt-4 inline-block text-sm text-forest-400">
           Back to shop
         </Link>
       </div>
@@ -33,69 +31,53 @@ export default function ProductDetailPage({
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-xs text-espresso-400 tracking-editorial mb-8">
-        <Link href="/" className="hover:text-espresso-700">
+      <nav className="flex items-center gap-2 text-xs text-dark-500 mb-8">
+        <Link href="/" className="hover:text-forest-400 transition-colors">
           Home
         </Link>
         <ChevronRight size={12} />
-        <Link href="/products" className="hover:text-espresso-700">
+        <Link href="/products" className="hover:text-forest-400 transition-colors">
           Shop
         </Link>
         <ChevronRight size={12} />
-        <span className="text-espresso-600">{product.name}</span>
+        <span className="text-dark-300">{product.name}</span>
       </nav>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
-        {/* Gallery */}
-        <div className="space-y-3">
-          <div className="aspect-[4/5] bg-parchment-100 rounded-sm card-organic overflow-hidden">
-            <div className="w-full h-full bg-gradient-to-br from-parchment-200 via-parchment-100 to-parchment-300 flex items-center justify-center">
-              <span className="font-serif text-parchment-300 text-8xl font-semibold opacity-30">
-                {product.name.charAt(0)}
-              </span>
-            </div>
-            <div className="raymora-watermark">
-              <span>Raymora</span>
-            </div>
-          </div>
-          {/* Thumbnails */}
-          <div className="flex gap-3">
-            {product.images.map((_, i) => (
-              <div
-                key={i}
-                className={`w-20 h-20 bg-parchment-100 rounded-sm border-organic cursor-pointer ${
-                  i === 0 ? "border-gold-500" : ""
-                }`}
-              >
-                <div className="w-full h-full bg-gradient-to-br from-parchment-200 to-parchment-300 flex items-center justify-center">
-                  <span className="font-serif text-parchment-400 text-xs">
-                    {i + 1}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        {/* 3D Viewer */}
+        <ParallaxLayer speed={0.1}>
+          <TShirtViewer color={product.color} design={product.design} />
+        </ParallaxLayer>
 
         {/* Product Info */}
         <div>
-          <p className="text-xs font-medium text-gold-600 tracking-boutique uppercase mb-2">
-            {product.category.replace("-", " ")}
-          </p>
-          <h1 className="font-serif text-3xl lg:text-4xl font-semibold text-espresso-800 heading-imperfect">
-            {product.name}
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-forest-500/10 border border-forest-500/20 rounded-full mb-4">
+            <span
+              className={`w-2 h-2 rounded-full ${
+                product.color === "black" ? "bg-dark-900 border border-dark-600" : "bg-white"
+              }`}
+            />
+            <span className="text-xs font-semibold text-forest-300 uppercase tracking-wider">
+              {product.color} edition
+            </span>
+          </div>
+
+          <h1 className="font-display text-3xl lg:text-4xl font-bold text-white">
+            <Text3D text={product.name} depth={3} color="#84CC16" />
           </h1>
 
+          <p className="mt-2 text-sm text-dark-400">{product.tagline}</p>
+
           {/* Rating */}
-          <div className="flex items-center gap-2 mt-3">
+          <div className="flex items-center gap-2 mt-4">
             <div className="flex">
               {[1, 2, 3, 4, 5].map((star) => (
                 <svg
                   key={star}
                   className={`w-4 h-4 ${
                     star <= Math.round(product.rating)
-                      ? "text-gold-500"
-                      : "text-parchment-300"
+                      ? "text-lime-400"
+                      : "text-dark-700"
                   }`}
                   fill="currentColor"
                   viewBox="0 0 20 20"
@@ -104,12 +86,12 @@ export default function ProductDetailPage({
                 </svg>
               ))}
             </div>
-            <span className="text-xs text-espresso-400">
+            <span className="text-xs text-dark-400">
               {product.rating} ({product.reviewCount} reviews)
             </span>
           </div>
 
-          <p className="mt-6 text-espresso-500 leading-relaxed">
+          <p className="mt-6 text-dark-300 leading-relaxed">
             {product.description}
           </p>
 
@@ -119,37 +101,21 @@ export default function ProductDetailPage({
           </div>
 
           {/* Features */}
-          <div className="mt-8 pt-8 border-t border-parchment-200">
-            <h3 className="text-xs font-semibold text-espresso-600 tracking-boutique uppercase mb-4">
+          <div className="mt-8 pt-8 border-t border-dark-800">
+            <h3 className="text-xs font-bold text-forest-400 uppercase tracking-widest mb-4">
               Details
             </h3>
             <ul className="space-y-2">
               {product.features.map((feature, i) => (
                 <li
                   key={i}
-                  className="flex items-start gap-2 text-sm text-espresso-500"
+                  className="flex items-start gap-2 text-sm text-dark-300"
                 >
-                  <span className="w-1 h-1 rounded-full bg-gold-500 mt-2 flex-shrink-0" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-forest-500 mt-1.5 flex-shrink-0" />
                   {feature}
                 </li>
               ))}
             </ul>
-          </div>
-
-          {/* Trust */}
-          <div className="mt-8 pt-8 border-t border-parchment-200 grid grid-cols-3 gap-4">
-            {[
-              { icon: Truck, label: "Free shipping" },
-              { icon: Shield, label: "2-year warranty" },
-              { icon: RotateCcw, label: "30-day returns" },
-            ].map((item, i) => (
-              <div key={i} className="flex flex-col items-center text-center">
-                <item.icon size={18} className="text-gold-600 mb-1" />
-                <span className="text-[10px] text-espresso-400 tracking-editorial">
-                  {item.label}
-                </span>
-              </div>
-            ))}
           </div>
         </div>
       </div>

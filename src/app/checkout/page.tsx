@@ -3,51 +3,68 @@
 import { useState } from "react";
 import { useCartStore } from "@/store/cart";
 import { formatPrice } from "@/lib/utils";
-import { Lock, Truck, CreditCard } from "lucide-react";
+import { Lock, Truck, CreditCard, Check } from "lucide-react";
 
 export default function CheckoutPage() {
   const items = useCartStore((s) => s.items);
   const getTotal = useCartStore((s) => s.getTotal);
   const [step, setStep] = useState(1);
+  const [orderPlaced, setOrderPlaced] = useState(false);
   const total = getTotal();
   const shipping = total >= 150 ? 0 : 12;
 
-  if (items.length === 0) {
+  if (items.length === 0 && !orderPlaced) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-        <h1 className="font-serif text-3xl text-espresso-800">
+        <h1 className="font-display text-3xl font-bold text-white">
           Nothing to checkout
         </h1>
       </div>
     );
   }
 
+  if (orderPlaced) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+        <div className="w-20 h-20 bg-forest-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+          <Check size={32} className="text-forest-400" />
+        </div>
+        <h1 className="font-display text-3xl lg:text-4xl font-bold text-white mb-3">
+          Order Placed!
+        </h1>
+        <p className="text-dark-400 max-w-md mx-auto">
+          Thank you for your order. You&apos;ll receive a confirmation email
+          shortly with tracking details.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      {/* Security Bar */}
-      <div className="flex items-center justify-center gap-2 text-xs text-espresso-400 tracking-editorial mb-8">
+      <div className="flex items-center justify-center gap-2 text-xs text-dark-500 mb-8">
         <Lock size={12} />
-        <span>Secure checkout powered by Stripe</span>
+        <span>Secure checkout</span>
       </div>
 
-      {/* Progress Steps */}
+      {/* Steps */}
       <div className="flex items-center justify-center gap-8 mb-10">
         {["Information", "Shipping", "Payment"].map((label, i) => (
           <div key={label} className="flex items-center gap-2">
             <span
-              className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold ${
+              className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
                 step > i + 1
-                  ? "bg-sage-500 text-white"
+                  ? "bg-forest-500 text-white"
                   : step === i + 1
-                  ? "bg-gold-500 text-white"
-                  : "bg-parchment-200 text-espresso-400"
+                  ? "bg-gradient-to-r from-forest-500 to-lime-500 text-white"
+                  : "bg-dark-800 text-dark-500"
               }`}
             >
               {step > i + 1 ? "✓" : i + 1}
             </span>
             <span
               className={`text-sm hidden sm:inline ${
-                step === i + 1 ? "text-espresso-800 font-medium" : "text-espresso-400"
+                step === i + 1 ? "text-white font-semibold" : "text-dark-500"
               }`}
             >
               {label}
@@ -57,67 +74,30 @@ export default function CheckoutPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
-        {/* Form */}
         <div className="lg:col-span-3">
           {step === 1 && (
-            <div className="space-y-6 animate-fade-in">
-              <h2 className="font-serif text-xl font-semibold text-espresso-800 heading-imperfect">
+            <div className="space-y-5">
+              <h2 className="font-display text-xl font-bold text-white">
                 Contact & Shipping
               </h2>
-              <div className="space-y-4">
-                <input
-                  type="email"
-                  placeholder="Email address"
-                  className="w-full px-4 py-3 text-sm bg-parchment-50 border border-parchment-300 text-espresso-800 placeholder:text-espresso-400"
-                />
-                <div className="grid grid-cols-2 gap-4">
-                  <input
-                    type="text"
-                    placeholder="First name"
-                    className="w-full px-4 py-3 text-sm bg-parchment-50 border border-parchment-300 text-espresso-800 placeholder:text-espresso-400"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Last name"
-                    className="w-full px-4 py-3 text-sm bg-parchment-50 border border-parchment-300 text-espresso-800 placeholder:text-espresso-400"
-                  />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Address"
-                  className="w-full px-4 py-3 text-sm bg-parchment-50 border border-parchment-300 text-espresso-800 placeholder:text-espresso-400"
-                />
-                <input
-                  type="text"
-                  placeholder="Apartment, suite, etc. (optional)"
-                  className="w-full px-4 py-3 text-sm bg-parchment-50 border border-parchment-300 text-espresso-800 placeholder:text-espresso-400"
-                />
-                <div className="grid grid-cols-3 gap-4">
-                  <input
-                    type="text"
-                    placeholder="City"
-                    className="w-full px-4 py-3 text-sm bg-parchment-50 border border-parchment-300 text-espresso-800 placeholder:text-espresso-400"
-                  />
-                  <input
-                    type="text"
-                    placeholder="State"
-                    className="w-full px-4 py-3 text-sm bg-parchment-50 border border-parchment-300 text-espresso-800 placeholder:text-espresso-400"
-                  />
-                  <input
-                    type="text"
-                    placeholder="ZIP"
-                    className="w-full px-4 py-3 text-sm bg-parchment-50 border border-parchment-300 text-espresso-800 placeholder:text-espresso-400"
-                  />
-                </div>
-                <input
-                  type="tel"
-                  placeholder="Phone"
-                  className="w-full px-4 py-3 text-sm bg-parchment-50 border border-parchment-300 text-espresso-800 placeholder:text-espresso-400"
-                />
+              <input
+                type="email"
+                placeholder="Email address"
+                className="w-full px-4 py-3 text-sm bg-dark-900 border border-dark-700 text-white placeholder:text-dark-500 rounded-xl"
+              />
+              <div className="grid grid-cols-2 gap-4">
+                <input type="text" placeholder="First name" className="w-full px-4 py-3 text-sm bg-dark-900 border border-dark-700 text-white placeholder:text-dark-500 rounded-xl" />
+                <input type="text" placeholder="Last name" className="w-full px-4 py-3 text-sm bg-dark-900 border border-dark-700 text-white placeholder:text-dark-500 rounded-xl" />
+              </div>
+              <input type="text" placeholder="Address" className="w-full px-4 py-3 text-sm bg-dark-900 border border-dark-700 text-white placeholder:text-dark-500 rounded-xl" />
+              <div className="grid grid-cols-3 gap-4">
+                <input type="text" placeholder="City" className="w-full px-4 py-3 text-sm bg-dark-900 border border-dark-700 text-white placeholder:text-dark-500 rounded-xl" />
+                <input type="text" placeholder="State" className="w-full px-4 py-3 text-sm bg-dark-900 border border-dark-700 text-white placeholder:text-dark-500 rounded-xl" />
+                <input type="text" placeholder="ZIP" className="w-full px-4 py-3 text-sm bg-dark-900 border border-dark-700 text-white placeholder:text-dark-500 rounded-xl" />
               </div>
               <button
                 onClick={() => setStep(2)}
-                className="w-full py-3.5 bg-espresso-800 text-parchment-100 text-sm font-medium tracking-boutique uppercase hover:bg-espresso-700 transition-colors"
+                className="w-full py-3.5 bg-gradient-to-r from-forest-600 to-lime-600 text-white text-sm font-bold tracking-widest uppercase rounded-xl hover:from-forest-500 hover:to-lime-500 transition-all"
               >
                 Continue to Shipping
               </button>
@@ -125,57 +105,42 @@ export default function CheckoutPage() {
           )}
 
           {step === 2 && (
-            <div className="space-y-6 animate-fade-in">
-              <h2 className="font-serif text-xl font-semibold text-espresso-800 heading-imperfect">
+            <div className="space-y-5">
+              <h2 className="font-display text-xl font-bold text-white">
                 Shipping Method
               </h2>
               <div className="space-y-3">
-                <label className="card-organic flex items-center gap-4 p-4 bg-parchment-50 cursor-pointer border-gold-500">
-                  <input
-                    type="radio"
-                    name="shipping"
-                    defaultChecked
-                    className="accent-gold-500"
-                  />
-                  <Truck size={18} className="text-gold-600" />
+                <label className="card-3d flex items-center gap-4 p-4 bg-dark-900/50 border border-forest-500/30 rounded-xl cursor-pointer">
+                  <input type="radio" name="shipping" defaultChecked className="accent-forest-500" />
+                  <Truck size={18} className="text-forest-400" />
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-espresso-800">
-                      Standard Shipping
-                    </p>
-                    <p className="text-xs text-espresso-400">
-                      5-7 business days
-                    </p>
+                    <p className="text-sm font-semibold text-white">Standard Shipping</p>
+                    <p className="text-xs text-dark-400">5-7 business days</p>
                   </div>
-                  <span className="text-sm font-medium text-espresso-700">
+                  <span className="text-sm font-bold text-forest-400">
                     {shipping === 0 ? "Free" : formatPrice(shipping)}
                   </span>
                 </label>
-                <label className="card-organic flex items-center gap-4 p-4 bg-parchment-50 cursor-pointer">
-                  <input type="radio" name="shipping" className="accent-gold-500" />
-                  <Truck size={18} className="text-espresso-400" />
+                <label className="card-3d flex items-center gap-4 p-4 bg-dark-900/50 border border-dark-700 rounded-xl cursor-pointer">
+                  <input type="radio" name="shipping" className="accent-forest-500" />
+                  <Truck size={18} className="text-dark-400" />
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-espresso-800">
-                      Express Shipping
-                    </p>
-                    <p className="text-xs text-espresso-400">
-                      2-3 business days
-                    </p>
+                    <p className="text-sm font-semibold text-white">Express Shipping</p>
+                    <p className="text-xs text-dark-400">2-3 business days</p>
                   </div>
-                  <span className="text-sm font-medium text-espresso-700">
-                    $24.00
-                  </span>
+                  <span className="text-sm font-bold text-white">$24.00</span>
                 </label>
               </div>
               <div className="flex gap-3">
                 <button
                   onClick={() => setStep(1)}
-                  className="px-6 py-3 border border-parchment-300 text-sm text-espresso-600 tracking-editorial hover:bg-parchment-100 transition-colors"
+                  className="px-6 py-3 border border-dark-700 text-sm text-dark-300 rounded-xl hover:bg-dark-800 transition-colors"
                 >
                   Back
                 </button>
                 <button
                   onClick={() => setStep(3)}
-                  className="flex-1 py-3 bg-espresso-800 text-parchment-100 text-sm font-medium tracking-boutique uppercase hover:bg-espresso-700 transition-colors"
+                  className="flex-1 py-3 bg-gradient-to-r from-forest-600 to-lime-600 text-white text-sm font-bold tracking-widest uppercase rounded-xl hover:from-forest-500 hover:to-lime-500 transition-all"
                 >
                   Continue to Payment
                 </button>
@@ -184,52 +149,37 @@ export default function CheckoutPage() {
           )}
 
           {step === 3 && (
-            <div className="space-y-6 animate-fade-in">
-              <h2 className="font-serif text-xl font-semibold text-espresso-800 heading-imperfect">
+            <div className="space-y-5">
+              <h2 className="font-display text-xl font-bold text-white">
                 Payment
               </h2>
-              <div className="space-y-4">
-                <div className="card-organic p-4 bg-parchment-50">
-                  <div className="flex items-center gap-3 mb-4">
-                    <CreditCard size={18} className="text-gold-600" />
-                    <span className="text-sm font-medium text-espresso-800">
-                      Credit Card
-                    </span>
+              <div className="card-3d p-5 bg-dark-900/50 border border-dark-700 rounded-xl">
+                <div className="flex items-center gap-3 mb-4">
+                  <CreditCard size={18} className="text-forest-400" />
+                  <span className="text-sm font-semibold text-white">
+                    Credit Card
+                  </span>
+                </div>
+                <div className="space-y-3">
+                  <input type="text" placeholder="Card number" className="w-full px-4 py-3 text-sm bg-dark-950 border border-dark-700 text-white placeholder:text-dark-500 rounded-xl" />
+                  <div className="grid grid-cols-2 gap-3">
+                    <input type="text" placeholder="MM / YY" className="w-full px-4 py-3 text-sm bg-dark-950 border border-dark-700 text-white placeholder:text-dark-500 rounded-xl" />
+                    <input type="text" placeholder="CVC" className="w-full px-4 py-3 text-sm bg-dark-950 border border-dark-700 text-white placeholder:text-dark-500 rounded-xl" />
                   </div>
-                  <div className="space-y-3">
-                    <input
-                      type="text"
-                      placeholder="Card number"
-                      className="w-full px-4 py-3 text-sm bg-parchment-50 border border-parchment-300 text-espresso-800 placeholder:text-espresso-400"
-                    />
-                    <div className="grid grid-cols-2 gap-3">
-                      <input
-                        type="text"
-                        placeholder="MM / YY"
-                        className="w-full px-4 py-3 text-sm bg-parchment-50 border border-parchment-300 text-espresso-800 placeholder:text-espresso-400"
-                      />
-                      <input
-                        type="text"
-                        placeholder="CVC"
-                        className="w-full px-4 py-3 text-sm bg-parchment-50 border border-parchment-300 text-espresso-800 placeholder:text-espresso-400"
-                      />
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="Name on card"
-                      className="w-full px-4 py-3 text-sm bg-parchment-50 border border-parchment-300 text-espresso-800 placeholder:text-espresso-400"
-                    />
-                  </div>
+                  <input type="text" placeholder="Name on card" className="w-full px-4 py-3 text-sm bg-dark-950 border border-dark-700 text-white placeholder:text-dark-500 rounded-xl" />
                 </div>
               </div>
               <div className="flex gap-3">
                 <button
                   onClick={() => setStep(2)}
-                  className="px-6 py-3 border border-parchment-300 text-sm text-espresso-600 tracking-editorial hover:bg-parchment-100 transition-colors"
+                  className="px-6 py-3 border border-dark-700 text-sm text-dark-300 rounded-xl hover:bg-dark-800 transition-colors"
                 >
                   Back
                 </button>
-                <button className="flex-1 py-3 bg-gold-500 text-white text-sm font-medium tracking-boutique uppercase hover:bg-gold-600 transition-colors flex items-center justify-center gap-2">
+                <button
+                  onClick={() => setOrderPlaced(true)}
+                  className="flex-1 py-3 bg-gradient-to-r from-forest-500 to-lime-500 text-white text-sm font-bold tracking-widest uppercase rounded-xl hover:from-forest-400 hover:to-lime-400 transition-all flex items-center justify-center gap-2"
+                >
                   <Lock size={14} />
                   Pay {formatPrice(total + shipping)}
                 </button>
@@ -238,56 +188,65 @@ export default function CheckoutPage() {
           )}
         </div>
 
-        {/* Order Summary */}
+        {/* Summary */}
         <div className="lg:col-span-2">
-          <div className="card-organic bg-parchment-50 p-6 sticky top-24">
-            <h3 className="font-serif text-lg font-semibold text-espresso-800 heading-imperfect mb-4">
+          <div className="card-3d bg-dark-900/50 border border-dark-800 p-6 rounded-xl sticky top-24">
+            <h3 className="font-display text-lg font-bold text-white mb-4">
               Your Order
             </h3>
             <div className="space-y-3 mb-4">
               {items.map((item) => (
                 <div
-                  key={`${item.productId}-${item.variantId}`}
+                  key={`${item.productId}-${item.size}`}
                   className="flex gap-3"
                 >
-                  <div className="w-14 h-16 bg-parchment-100 rounded-sm flex-shrink-0 flex items-center justify-center relative">
-                    <span className="font-serif text-parchment-300 text-sm">
+                  <div
+                    className={`w-14 h-16 rounded-lg flex-shrink-0 flex items-center justify-center relative ${
+                      item.product.color === "black"
+                        ? "bg-dark-900"
+                        : "bg-dark-100"
+                    }`}
+                  >
+                    <span
+                      className={`font-display text-sm font-bold ${
+                        item.product.color === "black"
+                          ? "text-dark-600"
+                          : "text-dark-400"
+                      }`}
+                    >
                       {item.product.name.charAt(0)}
                     </span>
-                    <span className="absolute -top-1.5 -right-1.5 bg-espresso-600 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">
+                    <span className="absolute -top-1.5 -right-1.5 bg-forest-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold">
                       {item.quantity}
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-espresso-800 truncate">
+                    <p className="text-xs font-semibold text-white truncate">
                       {item.product.name}
                     </p>
-                    {item.variant && (
-                      <p className="text-[10px] text-espresso-400">
-                        {item.variant.options[0]?.label}
-                      </p>
-                    )}
+                    <p className="text-[10px] text-dark-400 uppercase">
+                      Size: {item.size}
+                    </p>
                   </div>
-                  <p className="text-xs font-medium text-espresso-700">
+                  <p className="text-xs font-bold text-white">
                     {formatPrice(item.product.price * item.quantity)}
                   </p>
                 </div>
               ))}
             </div>
-            <div className="divider-organic mb-4" />
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between text-espresso-500">
+            <div className="border-t border-dark-700 pt-4 space-y-2 text-sm">
+              <div className="flex justify-between text-dark-400">
                 <span>Subtotal</span>
                 <span>{formatPrice(total)}</span>
               </div>
-              <div className="flex justify-between text-espresso-500">
+              <div className="flex justify-between text-dark-400">
                 <span>Shipping</span>
                 <span>{shipping === 0 ? "Free" : formatPrice(shipping)}</span>
               </div>
-              <div className="divider-organic" />
-              <div className="flex justify-between font-semibold text-espresso-800 text-base">
+              <div className="border-t border-dark-700 pt-2" />
+              <div className="flex justify-between font-bold text-white text-base">
                 <span>Total</span>
-                <span>{formatPrice(total + shipping)}</span>
+                <span className="text-forest-400">{formatPrice(total + shipping)}</span>
               </div>
             </div>
           </div>

@@ -1,12 +1,12 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { CartItem, Product, ProductVariant } from "@/types";
+import { CartItem, Product } from "@/types";
 
 interface CartStore {
   items: CartItem[];
-  addItem: (product: Product, variant: ProductVariant | null, quantity?: number) => void;
-  removeItem: (productId: string, variantId: string) => void;
-  updateQuantity: (productId: string, variantId: string, quantity: number) => void;
+  addItem: (product: Product, size: string, quantity?: number) => void;
+  removeItem: (productId: string, size: string) => void;
+  updateQuantity: (productId: string, size: string, quantity: number) => void;
   clearCart: () => void;
   getTotal: () => number;
   getItemCount: () => number;
@@ -17,12 +17,10 @@ export const useCartStore = create<CartStore>()(
     (set, get) => ({
       items: [],
 
-      addItem: (product, variant, quantity = 1) => {
+      addItem: (product, size, quantity = 1) => {
         const items = get().items;
         const existingIndex = items.findIndex(
-          (item) =>
-            item.productId === product.id &&
-            item.variantId === (variant?.id || "default")
+          (item) => item.productId === product.id && item.size === size
         );
 
         if (existingIndex > -1) {
@@ -33,35 +31,28 @@ export const useCartStore = create<CartStore>()(
           set({
             items: [
               ...items,
-              {
-                productId: product.id,
-                product,
-                variantId: variant?.id || "default",
-                variant,
-                quantity,
-              },
+              { productId: product.id, product, size, quantity },
             ],
           });
         }
       },
 
-      removeItem: (productId, variantId) => {
+      removeItem: (productId, size) => {
         set({
           items: get().items.filter(
-            (item) =>
-              !(item.productId === productId && item.variantId === variantId)
+            (item) => !(item.productId === productId && item.size === size)
           ),
         });
       },
 
-      updateQuantity: (productId, variantId, quantity) => {
+      updateQuantity: (productId, size, quantity) => {
         if (quantity <= 0) {
-          get().removeItem(productId, variantId);
+          get().removeItem(productId, size);
           return;
         }
         set({
           items: get().items.map((item) =>
-            item.productId === productId && item.variantId === variantId
+            item.productId === productId && item.size === size
               ? { ...item, quantity }
               : item
           ),
@@ -70,19 +61,15 @@ export const useCartStore = create<CartStore>()(
 
       clearCart: () => set({ items: [] }),
 
-      getTotal: () => {
-        return get().items.reduce(
+      getTotal: () =>
+        get().items.reduce(
           (total, item) => total + item.product.price * item.quantity,
           0
-        );
-      },
+        ),
 
-      getItemCount: () => {
-        return get().items.reduce((count, item) => count + item.quantity, 0);
-      },
+      getItemCount: () =>
+        get().items.reduce((count, item) => count + item.quantity, 0),
     }),
-    {
-      name: "raymora-cart",
-    }
+    { name: "raymora-cart" }
   )
 );
