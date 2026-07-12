@@ -4,19 +4,14 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
-  title: "Raymora — Premium Heritage Streetwear",
-  description:
-    "Limited edition tees with heritage designs. Windmill Heritage and Sale & Distribution collections.",
+  title: "Raymora — Heritage Streetwear",
+  description: "Premium tees with heritage designs. Print-on-demand, made for you.",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-screen flex flex-col bg-dark-950">
+      <body className="min-h-screen flex flex-col bg-[#0a0a0a]">
         <Header />
         <main className="flex-1 pt-16 lg:pt-20">{children}</main>
         <Footer />

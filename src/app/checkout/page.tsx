@@ -1,74 +1,52 @@
 "use client";
 
 import { useState } from "react";
-import { useCartStore } from "@/store/cart";
+import { useCart } from "@/store/cart";
 import { formatPrice } from "@/lib/utils";
-import { Lock, Truck, CreditCard, Check } from "lucide-react";
+import { Lock, CreditCard, Check } from "lucide-react";
+import Link from "next/link";
 
 export default function CheckoutPage() {
-  const items = useCartStore((s) => s.items);
-  const getTotal = useCartStore((s) => s.getTotal);
+  const items = useCart((s) => s.items);
+  const getTotal = useCart((s) => s.getTotal);
+  const clearCart = useCart((s) => s.clearCart);
   const [step, setStep] = useState(1);
-  const [orderPlaced, setOrderPlaced] = useState(false);
+  const [done, setDone] = useState(false);
   const total = getTotal();
   const shipping = total >= 150 ? 0 : 12;
 
-  if (items.length === 0 && !orderPlaced) {
+  if (items.length === 0 && !done) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-        <h1 className="font-display text-3xl font-bold text-white">
-          Nothing to checkout
-        </h1>
+      <div className="max-w-7xl mx-auto px-4 py-20 text-center">
+        <h1 className="font-display text-3xl font-bold text-white">Nothing to checkout</h1>
+        <Link href="/products" className="mt-4 inline-block text-forest-400 text-sm">Go shopping</Link>
       </div>
     );
   }
 
-  if (orderPlaced) {
+  if (done) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-        <div className="w-20 h-20 bg-forest-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-          <Check size={32} className="text-forest-400" />
-        </div>
-        <h1 className="font-display text-3xl lg:text-4xl font-bold text-white mb-3">
-          Order Placed!
-        </h1>
-        <p className="text-dark-400 max-w-md mx-auto">
-          Thank you for your order. You&apos;ll receive a confirmation email
-          shortly with tracking details.
-        </p>
+      <div className="max-w-7xl mx-auto px-4 py-20 text-center">
+        <div className="w-20 h-20 bg-forest-500/20 rounded-full flex items-center justify-center mx-auto mb-6"><Check size={32} className="text-forest-400" /></div>
+        <h1 className="font-display text-3xl font-bold text-white mb-3">Order Placed!</h1>
+        <p className="text-dark-400 max-w-md mx-auto">Thank you. You&apos;ll receive a confirmation email with tracking details.</p>
+        <Link href="/products" className="mt-8 inline-block bg-forest-600 text-white px-8 py-3 rounded-xl text-sm font-bold hover:bg-forest-500">Continue Shopping</Link>
       </div>
     );
   }
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <div className="flex items-center justify-center gap-2 text-xs text-dark-500 mb-8">
-        <Lock size={12} />
-        <span>Secure checkout</span>
-      </div>
+      <div className="flex items-center justify-center gap-2 text-xs text-dark-500 mb-8"><Lock size={12} /> Secure checkout</div>
 
       {/* Steps */}
-      <div className="flex items-center justify-center gap-8 mb-10">
-        {["Information", "Shipping", "Payment"].map((label, i) => (
+      <div className="flex items-center justify-center gap-6 mb-10">
+        {["Info", "Shipping", "Pay"].map((label, i) => (
           <div key={label} className="flex items-center gap-2">
-            <span
-              className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
-                step > i + 1
-                  ? "bg-forest-500 text-white"
-                  : step === i + 1
-                  ? "bg-gradient-to-r from-forest-500 to-lime-500 text-white"
-                  : "bg-dark-800 text-dark-500"
-              }`}
-            >
-              {step > i + 1 ? "✓" : i + 1}
+            <span className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${step > i+1 ? "bg-forest-500 text-white" : step === i+1 ? "bg-forest-600 text-white" : "bg-dark-800 text-dark-500"}`}>
+              {step > i+1 ? "✓" : i+1}
             </span>
-            <span
-              className={`text-sm hidden sm:inline ${
-                step === i + 1 ? "text-white font-semibold" : "text-dark-500"
-              }`}
-            >
-              {label}
-            </span>
+            <span className={`text-sm hidden sm:inline ${step === i+1 ? "text-white font-semibold" : "text-dark-500"}`}>{label}</span>
           </div>
         ))}
       </div>
@@ -76,15 +54,9 @@ export default function CheckoutPage() {
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
         <div className="lg:col-span-3">
           {step === 1 && (
-            <div className="space-y-5">
-              <h2 className="font-display text-xl font-bold text-white">
-                Contact & Shipping
-              </h2>
-              <input
-                type="email"
-                placeholder="Email address"
-                className="w-full px-4 py-3 text-sm bg-dark-900 border border-dark-700 text-white placeholder:text-dark-500 rounded-xl"
-              />
+            <div className="space-y-4">
+              <h2 className="font-display text-xl font-bold text-white">Contact & Shipping</h2>
+              <input type="email" placeholder="Email" className="w-full px-4 py-3 text-sm bg-dark-900 border border-dark-700 text-white placeholder:text-dark-500 rounded-xl" />
               <div className="grid grid-cols-2 gap-4">
                 <input type="text" placeholder="First name" className="w-full px-4 py-3 text-sm bg-dark-900 border border-dark-700 text-white placeholder:text-dark-500 rounded-xl" />
                 <input type="text" placeholder="Last name" className="w-full px-4 py-3 text-sm bg-dark-900 border border-dark-700 text-white placeholder:text-dark-500 rounded-xl" />
@@ -95,71 +67,33 @@ export default function CheckoutPage() {
                 <input type="text" placeholder="State" className="w-full px-4 py-3 text-sm bg-dark-900 border border-dark-700 text-white placeholder:text-dark-500 rounded-xl" />
                 <input type="text" placeholder="ZIP" className="w-full px-4 py-3 text-sm bg-dark-900 border border-dark-700 text-white placeholder:text-dark-500 rounded-xl" />
               </div>
-              <button
-                onClick={() => setStep(2)}
-                className="w-full py-3.5 bg-gradient-to-r from-forest-600 to-lime-600 text-white text-sm font-bold tracking-widest uppercase rounded-xl hover:from-forest-500 hover:to-lime-500 transition-all"
-              >
-                Continue to Shipping
-              </button>
+              <button onClick={() => setStep(2)} className="w-full py-3.5 bg-forest-600 text-white text-sm font-bold tracking-widest uppercase rounded-xl hover:bg-forest-500 transition-all">Continue to Shipping</button>
             </div>
           )}
-
           {step === 2 && (
-            <div className="space-y-5">
-              <h2 className="font-display text-xl font-bold text-white">
-                Shipping Method
-              </h2>
-              <div className="space-y-3">
-                <label className="card-3d flex items-center gap-4 p-4 bg-dark-900/50 border border-forest-500/30 rounded-xl cursor-pointer">
-                  <input type="radio" name="shipping" defaultChecked className="accent-forest-500" />
-                  <Truck size={18} className="text-forest-400" />
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold text-white">Standard Shipping</p>
-                    <p className="text-xs text-dark-400">5-7 business days</p>
-                  </div>
-                  <span className="text-sm font-bold text-forest-400">
-                    {shipping === 0 ? "Free" : formatPrice(shipping)}
-                  </span>
-                </label>
-                <label className="card-3d flex items-center gap-4 p-4 bg-dark-900/50 border border-dark-700 rounded-xl cursor-pointer">
-                  <input type="radio" name="shipping" className="accent-forest-500" />
-                  <Truck size={18} className="text-dark-400" />
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold text-white">Express Shipping</p>
-                    <p className="text-xs text-dark-400">2-3 business days</p>
-                  </div>
-                  <span className="text-sm font-bold text-white">$24.00</span>
-                </label>
-              </div>
+            <div className="space-y-4">
+              <h2 className="font-display text-xl font-bold text-white">Shipping Method</h2>
+              <label className="flex items-center gap-4 p-4 bg-dark-900 border border-forest-500/30 rounded-xl cursor-pointer">
+                <input type="radio" name="ship" defaultChecked className="accent-forest-500" />
+                <div className="flex-1"><p className="text-sm font-semibold text-white">Standard</p><p className="text-xs text-dark-400">5-7 business days</p></div>
+                <span className="text-sm font-bold text-forest-400">{shipping === 0 ? "Free" : formatPrice(shipping)}</span>
+              </label>
+              <label className="flex items-center gap-4 p-4 bg-dark-900 border border-dark-700 rounded-xl cursor-pointer">
+                <input type="radio" name="ship" className="accent-forest-500" />
+                <div className="flex-1"><p className="text-sm font-semibold text-white">Express</p><p className="text-xs text-dark-400">2-3 business days</p></div>
+                <span className="text-sm font-bold text-white">$24</span>
+              </label>
               <div className="flex gap-3">
-                <button
-                  onClick={() => setStep(1)}
-                  className="px-6 py-3 border border-dark-700 text-sm text-dark-300 rounded-xl hover:bg-dark-800 transition-colors"
-                >
-                  Back
-                </button>
-                <button
-                  onClick={() => setStep(3)}
-                  className="flex-1 py-3 bg-gradient-to-r from-forest-600 to-lime-600 text-white text-sm font-bold tracking-widest uppercase rounded-xl hover:from-forest-500 hover:to-lime-500 transition-all"
-                >
-                  Continue to Payment
-                </button>
+                <button onClick={() => setStep(1)} className="px-6 py-3 border border-dark-700 text-sm text-dark-300 rounded-xl hover:bg-dark-800">Back</button>
+                <button onClick={() => setStep(3)} className="flex-1 py-3 bg-forest-600 text-white text-sm font-bold tracking-widest uppercase rounded-xl hover:bg-forest-500">Continue to Payment</button>
               </div>
             </div>
           )}
-
           {step === 3 && (
-            <div className="space-y-5">
-              <h2 className="font-display text-xl font-bold text-white">
-                Payment
-              </h2>
-              <div className="card-3d p-5 bg-dark-900/50 border border-dark-700 rounded-xl">
-                <div className="flex items-center gap-3 mb-4">
-                  <CreditCard size={18} className="text-forest-400" />
-                  <span className="text-sm font-semibold text-white">
-                    Credit Card
-                  </span>
-                </div>
+            <div className="space-y-4">
+              <h2 className="font-display text-xl font-bold text-white">Payment</h2>
+              <div className="p-5 bg-dark-900 border border-dark-700 rounded-xl">
+                <div className="flex items-center gap-2 mb-4"><CreditCard size={18} className="text-forest-400" /><span className="text-sm font-semibold text-white">Credit Card</span></div>
                 <div className="space-y-3">
                   <input type="text" placeholder="Card number" className="w-full px-4 py-3 text-sm bg-dark-950 border border-dark-700 text-white placeholder:text-dark-500 rounded-xl" />
                   <div className="grid grid-cols-2 gap-3">
@@ -170,18 +104,9 @@ export default function CheckoutPage() {
                 </div>
               </div>
               <div className="flex gap-3">
-                <button
-                  onClick={() => setStep(2)}
-                  className="px-6 py-3 border border-dark-700 text-sm text-dark-300 rounded-xl hover:bg-dark-800 transition-colors"
-                >
-                  Back
-                </button>
-                <button
-                  onClick={() => setOrderPlaced(true)}
-                  className="flex-1 py-3 bg-gradient-to-r from-forest-500 to-lime-500 text-white text-sm font-bold tracking-widest uppercase rounded-xl hover:from-forest-400 hover:to-lime-400 transition-all flex items-center justify-center gap-2"
-                >
-                  <Lock size={14} />
-                  Pay {formatPrice(total + shipping)}
+                <button onClick={() => setStep(2)} className="px-6 py-3 border border-dark-700 text-sm text-dark-300 rounded-xl hover:bg-dark-800">Back</button>
+                <button onClick={() => { clearCart(); setDone(true); }} className="flex-1 py-3 bg-forest-500 text-white text-sm font-bold tracking-widest uppercase rounded-xl hover:bg-forest-400 flex items-center justify-center gap-2">
+                  <Lock size={14} /> Pay {formatPrice(total + shipping)}
                 </button>
               </div>
             </div>
@@ -190,64 +115,28 @@ export default function CheckoutPage() {
 
         {/* Summary */}
         <div className="lg:col-span-2">
-          <div className="card-3d bg-dark-900/50 border border-dark-800 p-6 rounded-xl sticky top-24">
-            <h3 className="font-display text-lg font-bold text-white mb-4">
-              Your Order
-            </h3>
+          <div className="bg-dark-950 border border-dark-800 p-6 rounded-2xl sticky top-24">
+            <h3 className="font-display text-lg font-bold text-white mb-4">Your Order</h3>
             <div className="space-y-3 mb-4">
               {items.map((item) => (
-                <div
-                  key={`${item.productId}-${item.size}`}
-                  className="flex gap-3"
-                >
-                  <div
-                    className={`w-14 h-16 rounded-lg flex-shrink-0 flex items-center justify-center relative ${
-                      item.product.color === "black"
-                        ? "bg-dark-900"
-                        : "bg-dark-100"
-                    }`}
-                  >
-                    <span
-                      className={`font-display text-sm font-bold ${
-                        item.product.color === "black"
-                          ? "text-dark-600"
-                          : "text-dark-400"
-                      }`}
-                    >
-                      {item.product.name.charAt(0)}
-                    </span>
-                    <span className="absolute -top-1.5 -right-1.5 bg-forest-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold">
-                      {item.quantity}
-                    </span>
+                <div key={`${item.productId}-${item.size}`} className="flex gap-3">
+                  <div className={`w-12 h-14 rounded-lg flex-shrink-0 flex items-center justify-center ${item.product.color === "black" ? "bg-dark-900" : "bg-dark-100"}`}>
+                    <span className={`text-xs font-bold ${item.product.color === "black" ? "text-dark-600" : "text-dark-400"}`}>{item.product.name.charAt(0)}</span>
+                    <span className="absolute -top-1 -right-1 bg-forest-500 text-white text-[9px] w-3.5 h-3.5 flex items-center justify-center rounded-full font-bold">{item.quantity}</span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-white truncate">
-                      {item.product.name}
-                    </p>
-                    <p className="text-[10px] text-dark-400 uppercase">
-                      Size: {item.size}
-                    </p>
+                    <p className="text-xs font-semibold text-white truncate">{item.product.name}</p>
+                    <p className="text-[10px] text-dark-400 uppercase">Size: {item.size}</p>
                   </div>
-                  <p className="text-xs font-bold text-white">
-                    {formatPrice(item.product.price * item.quantity)}
-                  </p>
+                  <p className="text-xs font-bold text-white">{formatPrice(item.product.price * item.quantity)}</p>
                 </div>
               ))}
             </div>
             <div className="border-t border-dark-700 pt-4 space-y-2 text-sm">
-              <div className="flex justify-between text-dark-400">
-                <span>Subtotal</span>
-                <span>{formatPrice(total)}</span>
-              </div>
-              <div className="flex justify-between text-dark-400">
-                <span>Shipping</span>
-                <span>{shipping === 0 ? "Free" : formatPrice(shipping)}</span>
-              </div>
+              <div className="flex justify-between text-dark-400"><span>Subtotal</span><span>{formatPrice(total)}</span></div>
+              <div className="flex justify-between text-dark-400"><span>Shipping</span><span>{shipping === 0 ? "Free" : formatPrice(shipping)}</span></div>
               <div className="border-t border-dark-700 pt-2" />
-              <div className="flex justify-between font-bold text-white text-base">
-                <span>Total</span>
-                <span className="text-forest-400">{formatPrice(total + shipping)}</span>
-              </div>
+              <div className="flex justify-between font-bold text-white"><span>Total</span><span className="text-forest-400">{formatPrice(total + shipping)}</span></div>
             </div>
           </div>
         </div>
